@@ -15,6 +15,9 @@ import org.springframework.security.web.authentication.logout.LogoutHandler;
 
 import static com.lasindu.clothfy_store.security.user.Role.ADMIN;
 import static com.lasindu.clothfy_store.security.user.Role.MANAGER;
+import static com.lasindu.clothfy_store.security.user.Permission.ADMIN_CREATE;
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
 
 /**
  * @author Lasindu Anjana
@@ -39,6 +42,8 @@ public class WebSecurityConfig {
                     auth
                         .requestMatchers("api/v1/auth/**").permitAll()
                         .requestMatchers("api/v1/product/**").hasAnyRole(ADMIN.name(), MANAGER.name())
+                        .requestMatchers(GET, "api/v1/product/**").permitAll()
+                        .requestMatchers(POST, "api/v1/product").hasAnyAuthority(ADMIN_CREATE.name())
                         .anyRequest().authenticated();
                 })
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
