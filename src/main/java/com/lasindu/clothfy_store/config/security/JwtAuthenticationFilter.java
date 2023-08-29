@@ -1,4 +1,4 @@
-package com.lasindu.clothfy_store.security.config;
+package com.lasindu.clothfy_store.config.security;
 
 import com.lasindu.clothfy_store.repository.TokenRepository;
 import com.lasindu.clothfy_store.service.JwtService;

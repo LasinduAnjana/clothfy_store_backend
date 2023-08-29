@@ -1,4 +1,4 @@
-package com.lasindu.clothfy_store.security.token;
+package com.lasindu.clothfy_store.config.security.token;
 
 /**
  * @author Lasindu Anjana

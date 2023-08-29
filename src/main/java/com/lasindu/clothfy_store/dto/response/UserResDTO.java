@@ -1,10 +1,16 @@
-package com.lasindu.clothfy_store.dto.request;
+package com.lasindu.clothfy_store.dto.response;
 
 import com.lasindu.clothfy_store.config.security.user.Role;
+import com.lasindu.clothfy_store.entity.Token;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 /**
  * @author Lasindu Anjana
@@ -16,10 +22,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterReqDTO {
-    private String firstname;
-    private String lastname;
+public class UserResDTO {
+    private String firstName;
+    private String lastName;
     private String email;
-    private String password;
     private Role role;
 }

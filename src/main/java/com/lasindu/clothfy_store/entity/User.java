@@ -1,6 +1,6 @@
 package com.lasindu.clothfy_store.entity;
 
-import com.lasindu.clothfy_store.security.user.Role;
+import com.lasindu.clothfy_store.config.security.user.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

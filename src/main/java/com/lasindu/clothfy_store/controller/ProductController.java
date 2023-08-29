@@ -1,6 +1,8 @@
 package com.lasindu.clothfy_store.controller;
 
 import com.lasindu.clothfy_store.dto.request.AddProductReqDTO;
+import com.lasindu.clothfy_store.dto.request.SellProductReqDTO;
+import com.lasindu.clothfy_store.dto.response.MessageResDTO;
 import com.lasindu.clothfy_store.entity.Product;
 import com.lasindu.clothfy_store.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -36,5 +38,10 @@ public class ProductController {
     @PostMapping
     public ResponseEntity<Product> addProduct(@RequestBody AddProductReqDTO request) {
         return new ResponseEntity<Product>(productService.addProduct(request), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/buy/{id}")
+    public ResponseEntity<MessageResDTO> sellProduct(@PathVariable int id, @RequestBody SellProductReqDTO request) {
+        return new ResponseEntity<MessageResDTO>(productService.sellProduct(id, request), HttpStatus.CREATED);
     }
 }

@@ -1,6 +1,7 @@
 package com.lasindu.clothfy_store.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lasindu.clothfy_store.config.security.user.Role;
 import com.lasindu.clothfy_store.dto.request.AuthReqDTO;
 import com.lasindu.clothfy_store.dto.request.RegisterReqDTO;
 import com.lasindu.clothfy_store.dto.response.AuthResDTO;
@@ -8,7 +9,7 @@ import com.lasindu.clothfy_store.entity.Token;
 import com.lasindu.clothfy_store.entity.User;
 import com.lasindu.clothfy_store.repository.TokenRepository;
 import com.lasindu.clothfy_store.repository.UserRepository;
-import com.lasindu.clothfy_store.security.token.TokenType;
+import com.lasindu.clothfy_store.config.security.token.TokenType;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +42,25 @@ public class AuthenticationService {
                 .lastName(request.getLastname())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(request.getRole())
+                .role(Role.USER)
+                .build();
+        var savedUser = repository.save(user);
+        var jwtToken = jwtService.generateToken(user);
+        var refreshToken = jwtService.generateRefreshToken(user);
+        saveUserToken(savedUser, jwtToken);
+        return AuthResDTO.builder()
+                .accessToken(jwtToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
+
+    public AuthResDTO ManagerRegister(RegisterReqDTO request) {
+        var user = User.builder()
+                .firstName(request.getFirstname())
+                .lastName(request.getLastname())
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .role(Role.MANAGER)
                 .build();
         var savedUser = repository.save(user);
         var jwtToken = jwtService.generateToken(user);
@@ -72,6 +91,8 @@ public class AuthenticationService {
                 .build();
     }
 
+
+
     private void saveUserToken(User user, String jwtToken) {
         var token = Token.builder()
                 .user(user)
@@ -83,7 +104,7 @@ public class AuthenticationService {
         tokenRepository.save(token);
     }
 
-    private void revokeAllUserTokens(User user) {
+    protected void revokeAllUserTokens(User user) {
         var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
         if (validUserTokens.isEmpty())
             return;

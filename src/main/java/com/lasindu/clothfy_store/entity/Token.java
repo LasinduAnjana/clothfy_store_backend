@@ -1,6 +1,6 @@
 package com.lasindu.clothfy_store.entity;
 
-import com.lasindu.clothfy_store.security.token.TokenType;
+import com.lasindu.clothfy_store.config.security.token.TokenType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,9 +14,8 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 @Entity
+@Table(name = "token")
 public class Token {
     @Id
     @GeneratedValue

@@ -1,4 +1,4 @@
-package com.lasindu.clothfy_store.security.user;
+package com.lasindu.clothfy_store.config.security.user;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.lasindu.clothfy_store.security.user.Permission.*;
+import static com.lasindu.clothfy_store.config.security.user.Permission.*;
 
 /**
  * @author Lasindu Anjana
@@ -20,7 +20,7 @@ import static com.lasindu.clothfy_store.security.user.Permission.*;
 @Getter
 @RequiredArgsConstructor
 public enum Role {
-    User(Collections.emptySet()),
+    USER(Collections.emptySet()),
     ADMIN(
             Set.of(
             ADMIN_READ,

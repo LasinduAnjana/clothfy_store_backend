@@ -1,4 +1,4 @@
-package com.lasindu.clothfy_store.security.user;
+package com.lasindu.clothfy_store.config.security.user;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

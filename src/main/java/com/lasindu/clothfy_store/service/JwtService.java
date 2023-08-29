@@ -27,7 +27,7 @@ public class JwtService {
     @Value("${application.security.jwt.secret-key}")
     private String secretKey;
 //    @Value("${application.security.jwt.expiration}")
-    private final long jwtExpiration = 60000;
+    private final long jwtExpiration = 600000;
 //    @Value("${application.security.jwt.refresh-token.expiration}")
     private final long refreshExpiration = 604800000;
 
@@ -67,7 +67,7 @@ public class JwtService {
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 60000))
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }

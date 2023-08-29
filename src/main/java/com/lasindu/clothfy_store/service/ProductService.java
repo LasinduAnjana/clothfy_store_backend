@@ -1,8 +1,11 @@
 package com.lasindu.clothfy_store.service;
 
 import com.lasindu.clothfy_store.dto.request.AddProductReqDTO;
+import com.lasindu.clothfy_store.dto.request.SellProductReqDTO;
+import com.lasindu.clothfy_store.dto.response.MessageResDTO;
 import com.lasindu.clothfy_store.entity.Product;
 import com.lasindu.clothfy_store.repository.ProductRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -45,4 +48,14 @@ public class ProductService {
         return productRepository.findById(id);
     }
 
+    @Transactional
+    public MessageResDTO sellProduct(int id, SellProductReqDTO request) {
+        Optional<Product> product =productRepository.findById(id);
+        if (product.isPresent()) {
+            productRepository.updateQuantityById(product.get().getQuantity()- request.getQuantity(), id);
+            return new MessageResDTO("product quantity update successfully");
+        }
+        return new MessageResDTO("product quantity update failed");
+
+    }
 }

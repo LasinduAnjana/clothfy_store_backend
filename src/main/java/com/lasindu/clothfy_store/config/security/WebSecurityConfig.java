@@ -1,5 +1,7 @@
-package com.lasindu.clothfy_store.security.config;
+package com.lasindu.clothfy_store.config.security;
 
+import com.lasindu.clothfy_store.config.security.user.Permission;
+import com.lasindu.clothfy_store.config.security.user.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,11 +15,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 
-import static com.lasindu.clothfy_store.security.user.Role.ADMIN;
-import static com.lasindu.clothfy_store.security.user.Role.MANAGER;
-import static com.lasindu.clothfy_store.security.user.Permission.ADMIN_CREATE;
-import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.http.HttpMethod.*;
 
 /**
  * @author Lasindu Anjana
@@ -41,9 +39,11 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> {
                     auth
                         .requestMatchers("api/v1/auth/**").permitAll()
-                        .requestMatchers("api/v1/product/**").hasAnyRole(ADMIN.name(), MANAGER.name())
+                        .requestMatchers("api/v1/product/**").hasAnyRole(Role.ADMIN.name(), Role.MANAGER.name())
                         .requestMatchers(GET, "api/v1/product/**").permitAll()
-                        .requestMatchers(POST, "api/v1/product").hasAnyAuthority(ADMIN_CREATE.name())
+                        .requestMatchers(POST, "api/v1/product").hasAnyAuthority(Permission.ADMIN_CREATE.name())
+                        .requestMatchers(PUT, "api/v1/product/buy/**").hasAnyAuthority(Permission.ADMIN_UPDATE.name())
+                        .requestMatchers(DELETE, "api/v1/product/**").hasAnyAuthority(Permission.ADMIN_DELETE.name())
                         .anyRequest().authenticated();
                 })
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
