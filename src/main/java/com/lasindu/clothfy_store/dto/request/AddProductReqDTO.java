@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 /**
  * @author Lasindu Anjana
  * @email lasindua@gmail.com
@@ -28,4 +30,6 @@ public class AddProductReqDTO {
     private ProductSize size;
     private ProductCategory category;
     private ProductType type;
+    // REFERENCE: imageDTO
+    private List<ImageDTO> images;
 }

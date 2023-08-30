@@ -18,8 +18,8 @@ import lombok.*;
 @Table(name = "token")
 public class Token {
     @Id
-    @GeneratedValue
-    private Integer id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
 
     @Column(unique = true)
     private String token;

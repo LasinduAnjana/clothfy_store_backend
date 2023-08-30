@@ -24,7 +24,7 @@ public class UserController {
     private final UserService userService;
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<MessageResDTO> deleteUser(@PathVariable int id) {
+    public ResponseEntity<MessageResDTO> deleteUser(@PathVariable Long id) {
         boolean result = userService.removeUser(id);
         if (result) {
             return new ResponseEntity<MessageResDTO>(new MessageResDTO("User removed successfull"), HttpStatus.OK);
@@ -34,7 +34,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getUser(@PathVariable int id) {
+    public ResponseEntity<?> getUser(@PathVariable Long id) {
         Optional<User> result = userService.getUser(id);
         return result.map(user -> new ResponseEntity<Object>(new UserResDTO(
                 user.getFirstName(),

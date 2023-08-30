@@ -33,6 +33,14 @@ public class AuthController {
     ) {
         return ResponseEntity.ok(service.register(request));
     }
+
+    @PostMapping("/admin/register")
+    public ResponseEntity<AuthResDTO> adminRegister(
+            @RequestBody RegisterReqDTO request
+    ) {
+        return ResponseEntity.ok(service.adminRegister(request));
+    }
+
     @PostMapping("/authenticate")
     public ResponseEntity<AuthResDTO> authenticate(
             @RequestBody AuthReqDTO request

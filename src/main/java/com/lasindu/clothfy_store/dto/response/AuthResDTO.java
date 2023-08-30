@@ -17,8 +17,18 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AuthResDTO {
+    /*
+     * use this token to access endpoints
+     * send as a Bearer token in request header -> Authorization
+     */
     @JsonProperty("access_token")
     private String accessToken;
+
+    /*
+     * this token have longer expiration time.
+     * use this to refresh access token without asking for username and password
+     * send as a Bearer token in request header -> Authorization
+     */
     @JsonProperty("refresh_token")
     private String refreshToken;
 }

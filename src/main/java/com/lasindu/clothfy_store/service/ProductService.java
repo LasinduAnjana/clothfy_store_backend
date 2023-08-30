@@ -1,9 +1,12 @@
 package com.lasindu.clothfy_store.service;
 
 import com.lasindu.clothfy_store.dto.request.AddProductReqDTO;
+import com.lasindu.clothfy_store.dto.request.ImageDTO;
 import com.lasindu.clothfy_store.dto.request.SellProductReqDTO;
 import com.lasindu.clothfy_store.dto.response.MessageResDTO;
+import com.lasindu.clothfy_store.entity.Image;
 import com.lasindu.clothfy_store.entity.Product;
+import com.lasindu.clothfy_store.repository.ImageRepository;
 import com.lasindu.clothfy_store.repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -22,9 +25,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProductService {
     private final ProductRepository productRepository;
+    private final ImageRepository imageRepository;
 
-    public Product addProduct(AddProductReqDTO request) {
-        var product = Product.builder()
+    @Transactional
+    public Optional<Product> addProduct(AddProductReqDTO request) {
+        var product = productRepository.save(Product.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .material(request.getMaterial())
@@ -34,9 +39,20 @@ public class ProductService {
                 .size(request.getSize())
                 .category(request.getCategory())
                 .type(request.getType())
-                .build();
+                .build());
 
-        return productRepository.save(product);
+
+        List<ImageDTO> images = request.getImages();
+        images.forEach(imageDTO -> {
+            if (productRepository.findById(imageDTO.getProductId()).isPresent())
+                imageRepository.save(Image.builder()
+                    .product(productRepository.findById(imageDTO.getProductId()).get())
+                    .placement(imageDTO.getPlacement())
+                    .filename(imageDTO.getFileName())
+                    .build());
+        });
+
+        return productRepository.findById(product.getId());
 
     }
 
@@ -44,12 +60,12 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public Optional<Product> getProductById(int id) {
+    public Optional<Product> getProductById(Long id) {
         return productRepository.findById(id);
     }
 
     @Transactional
-    public MessageResDTO sellProduct(int id, SellProductReqDTO request) {
+    public MessageResDTO sellProduct(Long id, SellProductReqDTO request) {
         Optional<Product> product =productRepository.findById(id);
         if (product.isPresent()) {
             productRepository.updateQuantityById(product.get().getQuantity()- request.getQuantity(), id);

@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 /**
  * @author Lasindu Anjana
  * @email lasindua@gmail.com
@@ -20,8 +22,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "product")
 public class Product {
     @Id
-    @GeneratedValue
-    private int id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
     private String title;
     private String description;
     private String material;
@@ -37,4 +39,7 @@ public class Product {
 
     @Enumerated(EnumType.STRING)
     private ProductType type;
+
+    @OneToMany(mappedBy = "product")
+    private List<Image> images;
 }

@@ -54,13 +54,13 @@ public class AuthenticationService {
                 .build();
     }
 
-    public AuthResDTO ManagerRegister(RegisterReqDTO request) {
+    public AuthResDTO adminRegister(RegisterReqDTO request) {
         var user = User.builder()
                 .firstName(request.getFirstname())
                 .lastName(request.getLastname())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.MANAGER)
+                .role(Role.ADMIN)
                 .build();
         var savedUser = repository.save(user);
         var jwtToken = jwtService.generateToken(user);

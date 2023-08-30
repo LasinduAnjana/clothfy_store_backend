@@ -8,6 +8,7 @@ import com.lasindu.clothfy_store.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,28 +21,28 @@ import java.util.Optional;
  **/
 
 @RestController
-@RequestMapping("api/v1/product")
+@RequestMapping("api/v1/")
 @RequiredArgsConstructor
 public class ProductController {
     private final ProductService productService;
 
-    @GetMapping
+    @GetMapping("/public/product")
     public ResponseEntity<List<Product>> getAllProducts() {
         return new ResponseEntity<List<Product>>(productService.getAllProducts(), HttpStatus.OK);
     }
 
-    @GetMapping("/{productId}")
-    public ResponseEntity<Optional<Product>> getProductById(@PathVariable int productId) {
+    @GetMapping("/public/product/{productId}")
+    public ResponseEntity<Optional<Product>> getProductById(@PathVariable Long productId) {
         return new ResponseEntity<Optional<Product>>(productService.getProductById(productId), HttpStatus.OK);
     }
 
-    @PostMapping
-    public ResponseEntity<Product> addProduct(@RequestBody AddProductReqDTO request) {
-        return new ResponseEntity<Product>(productService.addProduct(request), HttpStatus.CREATED);
+    @PostMapping("/admin/product")
+    public ResponseEntity<Optional<Product>> addProduct(@RequestBody AddProductReqDTO request) {
+        return new ResponseEntity<Optional<Product>>(productService.addProduct(request), HttpStatus.CREATED);
     }
 
-    @PutMapping("/buy/{id}")
-    public ResponseEntity<MessageResDTO> sellProduct(@PathVariable int id, @RequestBody SellProductReqDTO request) {
+    @PutMapping("/user/product/buy/{id}")
+    public ResponseEntity<MessageResDTO> sellProduct(@PathVariable Long id, @RequestBody SellProductReqDTO request) {
         return new ResponseEntity<MessageResDTO>(productService.sellProduct(id, request), HttpStatus.CREATED);
     }
 }

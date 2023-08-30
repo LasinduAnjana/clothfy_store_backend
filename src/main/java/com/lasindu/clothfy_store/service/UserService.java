@@ -20,11 +20,11 @@ public class UserService {
     private final UserRepository userRepository;
     private final AuthenticationService authenticationService;
 
-    public Optional<User> getUser(int id) {
+    public Optional<User> getUser(Long id) {
         return userRepository.findById(id);
     }
 
-    public boolean removeUser(int id) {
+    public boolean removeUser(Long id) {
         Optional<User> user = userRepository.findById(id);
         if (user.isPresent()) {
             authenticationService.revokeAllUserTokens(user.get());
