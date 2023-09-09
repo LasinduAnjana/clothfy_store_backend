@@ -24,7 +24,7 @@ public class Image {
     private long id;
 
     @Column(unique = true)
-    private String filename;
+    private String link;
 
     private int placement;
 

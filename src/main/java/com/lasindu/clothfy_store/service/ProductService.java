@@ -4,6 +4,7 @@ import com.lasindu.clothfy_store.dto.request.AddProductReqDTO;
 import com.lasindu.clothfy_store.dto.request.ImageDTO;
 import com.lasindu.clothfy_store.dto.request.SellProductReqDTO;
 import com.lasindu.clothfy_store.dto.response.MessageResDTO;
+import com.lasindu.clothfy_store.dto.response.ProductDTO;
 import com.lasindu.clothfy_store.entity.Image;
 import com.lasindu.clothfy_store.entity.Product;
 import com.lasindu.clothfy_store.repository.ImageRepository;
@@ -12,6 +13,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,22 +44,37 @@ public class ProductService {
                 .build());
 
 
-        List<ImageDTO> images = request.getImages();
-        images.forEach(imageDTO -> {
-            if (productRepository.findById(imageDTO.getProductId()).isPresent())
-                imageRepository.save(Image.builder()
-                    .product(productRepository.findById(imageDTO.getProductId()).get())
-                    .placement(imageDTO.getPlacement())
-                    .filename(imageDTO.getFileName())
-                    .build());
-        });
+//        List<String> imageLinks = request.getImageLinks();
+//
+//        imageLinks.forEach((link) -> {
+//                imageRepository.save(Image.builder()
+//                    .product(product)
+//                    .placement(index)
+//                    .filename(imageDTO.getFileName())
+//                    .build());
+//        });
 
         return productRepository.findById(product.getId());
 
     }
 
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    public List<ProductDTO> getAllProducts() {
+        List<Product> productList = productRepository.findAll();
+        List<ProductDTO> responseList = new ArrayList<ProductDTO>();
+        productList.forEach(product -> {
+            // TODO: get image links as array and add to response object
+            responseList.add(ProductDTO.builder()
+                    .title(product.getTitle())
+                    .quantity(product.getQuantity())
+                    .description(product.getDescription())
+                    .weight(product.getWeight())
+                    .material(product.getMaterial())
+                    .price(product.getPrice())
+                    .size(product.getSize())
+                    .type(product.getType())
+                    .build());
+        });
+        return responseList;
     }
 
     public Optional<Product> getProductById(Long id) {

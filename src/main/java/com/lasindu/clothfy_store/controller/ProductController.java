@@ -3,6 +3,7 @@ package com.lasindu.clothfy_store.controller;
 import com.lasindu.clothfy_store.dto.request.AddProductReqDTO;
 import com.lasindu.clothfy_store.dto.request.SellProductReqDTO;
 import com.lasindu.clothfy_store.dto.response.MessageResDTO;
+import com.lasindu.clothfy_store.dto.response.ProductDTO;
 import com.lasindu.clothfy_store.entity.Product;
 import com.lasindu.clothfy_store.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -21,14 +22,16 @@ import java.util.Optional;
  **/
 
 @RestController
-@RequestMapping("api/v1/")
+@RequestMapping("api/v1")
 @RequiredArgsConstructor
+@CrossOrigin(maxAge = 3600)
 public class ProductController {
     private final ProductService productService;
 
+//    @CrossOrigin(origins = "http://localhost:3000/")
     @GetMapping("/public/product")
-    public ResponseEntity<List<Product>> getAllProducts() {
-        return new ResponseEntity<List<Product>>(productService.getAllProducts(), HttpStatus.OK);
+    public ResponseEntity<List<ProductDTO>> getAllProducts() {
+        return new ResponseEntity<List<ProductDTO>>(productService.getAllProducts(), HttpStatus.OK);
     }
 
     @GetMapping("/public/product/{productId}")

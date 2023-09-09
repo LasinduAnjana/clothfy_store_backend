@@ -31,5 +31,5 @@ public class AddProductReqDTO {
     private ProductCategory category;
     private ProductType type;
     // REFERENCE: imageDTO
-    private List<ImageDTO> images;
+    private List<String> imageLinks;
 }

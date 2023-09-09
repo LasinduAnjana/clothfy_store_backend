@@ -36,6 +36,7 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
+    // TODO: check existing user not implemented, check again
     public AuthResDTO register(RegisterReqDTO request) {
         var user = User.builder()
                 .firstName(request.getFirstname())

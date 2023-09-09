@@ -1,6 +1,5 @@
 package com.lasindu.clothfy_store.controller;
 
-import com.lasindu.clothfy_store.dto.response.ImageResDTO;
 import com.lasindu.clothfy_store.dto.response.MessageResDTO;
 import com.lasindu.clothfy_store.service.ImageService;
 import lombok.RequiredArgsConstructor;
@@ -24,16 +23,8 @@ public class ImageController {
     private final ImageService imageService;
 
     @PostMapping("/admin/image")
-    public ResponseEntity<MessageResDTO> upload(@RequestParam("file") MultipartFile file) {
-        try {
-            System.out.println(file);
-            boolean result = imageService.uploadImage(file);
-            if (result)
-                return new ResponseEntity<MessageResDTO>(new MessageResDTO("file upload successfully"), HttpStatus.CREATED);
-            return new ResponseEntity<MessageResDTO>(new MessageResDTO("file upload failed"), HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public ResponseEntity<String> upload(@RequestParam("multipartFile") MultipartFile multipartFile) {
+        return imageService.upload(multipartFile);
     }
 
     @GetMapping("/public/image/{id}")
