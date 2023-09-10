@@ -1,7 +1,8 @@
 package com.lasindu.clothfy_store.repository;
 
-import com.lasindu.clothfy_store.entity.Image;
 import com.lasindu.clothfy_store.entity.Product;
+import com.lasindu.clothfy_store.entity.ProductCategory;
+import com.lasindu.clothfy_store.entity.ProductType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -23,9 +24,12 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             """)
    void updateQuantityById(int quantity, Long id);
 
-//    @Modifying
-//    @Query("""
-//            UPDATE Product p SET p.images = :images WHERE p.id = :id
-//            """)
-//    void updateImagesByProductId(List<Image> images, Long id);
+    @Query("""
+    SELECT p from Product p ORDER BY p.id DESC LIMIT 10
+""")
+    List<Product> findTop10();
+
+    List<Product> findAllByTypeOrderById(ProductType type);
+
+    List<Product> findAllByCategoryOrderById(ProductCategory category);
 }

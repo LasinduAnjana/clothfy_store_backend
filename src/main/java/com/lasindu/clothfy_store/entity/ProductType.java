@@ -11,7 +11,12 @@ public enum ProductType {
     SAREE,
     T_SHIRT,
     TOPS,
-    CASUAL_SHIRT,
+    CASUAL,
     SHORT,
-    TROUSER
+    TROUSER,
+    LINGERIE,
+    NIGHTWEAR,
+    FORMAL,
+    BOTTOMS,
+    UNDERWEAR
 }

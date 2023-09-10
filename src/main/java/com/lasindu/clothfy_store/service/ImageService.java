@@ -106,22 +106,22 @@ public class ImageService {
         }
     }
 
-    public ResponseEntity<InputStreamResource> getImage(Long id) throws IOException {
-        var image = imageRepository.findById(id);
-        if (image.isPresent()) {
-            File file = new File(storagePath + image.get().getFilename());
-            InputStreamResource inputStreamResource = new InputStreamResource(new FileInputStream(file));
-
-            // Set the headers for the response
-            HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + file.getName());
-
-//            filePath = fileStoragePath.resolve(image.get().getFilename());
-            return ResponseEntity.ok()
-                    .headers(headers)
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .body(inputStreamResource);
-        }
-        return null;
-    }
+//    public ResponseEntity<InputStreamResource> getImage(Long id) throws IOException {
+//        var image = imageRepository.findById(id);
+//        if (image.isPresent()) {
+//            File file = new File(storagePath + image.get().getFilename());
+//            InputStreamResource inputStreamResource = new InputStreamResource(new FileInputStream(file));
+//
+//            // Set the headers for the response
+//            HttpHeaders headers = new HttpHeaders();
+//            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + file.getName());
+//
+////            filePath = fileStoragePath.resolve(image.get().getFilename());
+//            return ResponseEntity.ok()
+//                    .headers(headers)
+//                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+//                    .body(inputStreamResource);
+//        }
+//        return null;
+//    }
 }

@@ -4,7 +4,10 @@ import com.lasindu.clothfy_store.dto.request.AddProductReqDTO;
 import com.lasindu.clothfy_store.dto.request.SellProductReqDTO;
 import com.lasindu.clothfy_store.dto.response.MessageResDTO;
 import com.lasindu.clothfy_store.dto.response.ProductDTO;
+import com.lasindu.clothfy_store.entity.CartItem;
 import com.lasindu.clothfy_store.entity.Product;
+import com.lasindu.clothfy_store.entity.ProductCategory;
+import com.lasindu.clothfy_store.entity.ProductType;
 import com.lasindu.clothfy_store.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,28 +27,48 @@ import java.util.Optional;
 @RestController
 @RequestMapping("api/v1")
 @RequiredArgsConstructor
-@CrossOrigin(maxAge = 3600)
+@CrossOrigin
 public class ProductController {
     private final ProductService productService;
 
-//    @CrossOrigin(origins = "http://localhost:3000/")
     @GetMapping("/public/product")
     public ResponseEntity<List<ProductDTO>> getAllProducts() {
-        return new ResponseEntity<List<ProductDTO>>(productService.getAllProducts(), HttpStatus.OK);
+        return productService.getAllProducts();
+    }
+
+    @GetMapping("/public/product/new")
+    public ResponseEntity<List<ProductDTO>> getNewProduct() {
+        return productService.getNewProducts();
     }
 
     @GetMapping("/public/product/{productId}")
-    public ResponseEntity<Optional<Product>> getProductById(@PathVariable Long productId) {
-        return new ResponseEntity<Optional<Product>>(productService.getProductById(productId), HttpStatus.OK);
+    public ResponseEntity<?> getProductById(@PathVariable Long productId) {
+        return productService.getProductById(productId);
     }
 
     @PostMapping("/admin/product")
-    public ResponseEntity<Optional<Product>> addProduct(@RequestBody AddProductReqDTO request) {
-        return new ResponseEntity<Optional<Product>>(productService.addProduct(request), HttpStatus.CREATED);
+    public ResponseEntity<ProductDTO> addProduct(@RequestBody AddProductReqDTO request) {
+        return productService.addProduct(request);
     }
 
     @PutMapping("/user/product/buy/{id}")
-    public ResponseEntity<MessageResDTO> sellProduct(@PathVariable Long id, @RequestBody SellProductReqDTO request) {
-        return new ResponseEntity<MessageResDTO>(productService.sellProduct(id, request), HttpStatus.CREATED);
+    public ResponseEntity<MessageResDTO> sellProduct(@PathVariable Long id, @RequestBody int quantity) {
+        return productService.sellProduct(id, quantity);
     }
+
+    @PostMapping("/user/product/cart/{id}")
+    public ResponseEntity<?> addToCartProduct(@PathVariable Long id, @RequestBody int quantity) {
+        return productService.addToCartProduct(id, quantity);
+    }
+
+    @GetMapping("/public/product/filter-by-type")
+    public ResponseEntity<List<ProductDTO>> getProductByType(@RequestParam ProductType type) {
+        return productService.getProductByProductType(type);
+    }
+
+    @GetMapping("/public/product/filter-by-category")
+    public ResponseEntity<List<ProductDTO>> getProductByCategory(@RequestParam ProductCategory category) {
+        return productService.getProductByProductCategory(category);
+    }
+
 }

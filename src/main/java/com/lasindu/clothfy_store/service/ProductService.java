@@ -5,12 +5,16 @@ import com.lasindu.clothfy_store.dto.request.ImageDTO;
 import com.lasindu.clothfy_store.dto.request.SellProductReqDTO;
 import com.lasindu.clothfy_store.dto.response.MessageResDTO;
 import com.lasindu.clothfy_store.dto.response.ProductDTO;
-import com.lasindu.clothfy_store.entity.Image;
-import com.lasindu.clothfy_store.entity.Product;
+import com.lasindu.clothfy_store.entity.*;
+import com.lasindu.clothfy_store.repository.CartItemRepository;
+import com.lasindu.clothfy_store.repository.CartRepository;
 import com.lasindu.clothfy_store.repository.ImageRepository;
 import com.lasindu.clothfy_store.repository.ProductRepository;
+import com.lasindu.clothfy_store.util.UserUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -28,9 +32,12 @@ import java.util.Optional;
 public class ProductService {
     private final ProductRepository productRepository;
     private final ImageRepository imageRepository;
+    private final CartItemRepository cartItemRepository;
+    private final CartRepository cartRepository;
 
-    @Transactional
-    public Optional<Product> addProduct(AddProductReqDTO request) {
+    private final UserUtil userUtil;
+
+    public ResponseEntity<ProductDTO> addProduct(AddProductReqDTO request) {
         var product = productRepository.save(Product.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())
@@ -44,25 +51,105 @@ public class ProductService {
                 .build());
 
 
-//        List<String> imageLinks = request.getImageLinks();
-//
-//        imageLinks.forEach((link) -> {
-//                imageRepository.save(Image.builder()
-//                    .product(product)
-//                    .placement(index)
-//                    .filename(imageDTO.getFileName())
-//                    .build());
-//        });
+        List<String> imageLinks = request.getImageLinks();
 
-        return productRepository.findById(product.getId());
+        for (int i = 0; i < imageLinks.size(); i++) {
+            imageRepository.save(
+                    Image.builder()
+                    .product(product)
+                    .link(imageLinks.get(i))
+                    .placement(i)
+                    .build()
+            );
+        }
+        List<Image> images = imageRepository.findAllByProductOrderByPlacement(product);
+        List<String> links = new ArrayList<String>();
+
+        images.forEach(link -> {
+            links.add(link.getLink());
+        });
+
+        ProductDTO response = ProductDTO.builder()
+                .title(product.getTitle())
+                .type(product.getType())
+                .size(product.getSize())
+                .price(product.getPrice())
+                .material(product.getMaterial())
+                .weight(product.getWeight())
+                .description(product.getDescription())
+                .quantity(product.getQuantity())
+                .imageLinks(links)
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
 
     }
 
-    public List<ProductDTO> getAllProducts() {
+    public ResponseEntity<List<ProductDTO>> getAllProducts() {
         List<Product> productList = productRepository.findAll();
-        List<ProductDTO> responseList = new ArrayList<ProductDTO>();
+        return getListResponseEntity(productList);
+    }
+
+    public ResponseEntity<?> getProductById(Long id) {
+        Optional<Product> product = productRepository.findById(id);
+        if (product.isPresent())
+            return new ResponseEntity<>(product.get(), HttpStatus.OK);
+        return new ResponseEntity<>(new MessageResDTO("product not found"), HttpStatus.NOT_FOUND);
+    }
+
+    @Transactional
+    public ResponseEntity<MessageResDTO> sellProduct(Long id, int quantity) {
+        Optional<Product> product = productRepository.findById(id);
+        if (product.isPresent()) {
+            productRepository.updateQuantityById(product.get().getQuantity() - quantity, id);
+            return new ResponseEntity<>(new MessageResDTO("product quantity update successfully"), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new MessageResDTO("product quantity update failed"), HttpStatus.BAD_REQUEST);
+
+    }
+
+    public ResponseEntity<?> addToCartProduct(Long id, int quantity) {
+        Optional<Product> product = productRepository.findById(id);
+        Optional<User> user = userUtil.getUserDetails();
+
+        if (product.isPresent() && user.isPresent() && cartRepository.findCartByUserId(user.get().getId()).isPresent()){
+            return new ResponseEntity<>(cartItemRepository.save(
+                CartItem
+                    .builder()
+                    .cart(cartRepository.findCartByUserId(user.get().getId()).get())
+                    .product(product.get())
+                    .quantity(quantity)
+                    .build()
+            ), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+    }
+
+    public ResponseEntity<List<ProductDTO>> getNewProducts() {
+        List<Product> productList = productRepository.findTop10();
+        return getListResponseEntity(productList);
+    }
+
+    public ResponseEntity<List<ProductDTO>> getProductByProductType(ProductType type) {
+        List<Product> productList = productRepository.findAllByTypeOrderById(type);
+        return getListResponseEntity(productList);
+    }
+
+    public ResponseEntity<List<ProductDTO>> getProductByProductCategory(ProductCategory category) {
+        List<Product> productList = productRepository.findAllByCategoryOrderById(category);
+        return getListResponseEntity(productList);
+    }
+
+    private ResponseEntity<List<ProductDTO>> getListResponseEntity(List<Product> productList) {
+        List<ProductDTO> responseList = new ArrayList<>();
         productList.forEach(product -> {
-            // TODO: get image links as array and add to response object
+            List<Image> images = imageRepository.findAllByProductOrderByPlacement(product);
+            List<String> links = new ArrayList<>();
+
+            images.forEach(link -> {
+                links.add(link.getLink());
+            });
+
             responseList.add(ProductDTO.builder()
                     .title(product.getTitle())
                     .quantity(product.getQuantity())
@@ -72,23 +159,9 @@ public class ProductService {
                     .price(product.getPrice())
                     .size(product.getSize())
                     .type(product.getType())
+                    .imageLinks(links)
                     .build());
         });
-        return responseList;
-    }
-
-    public Optional<Product> getProductById(Long id) {
-        return productRepository.findById(id);
-    }
-
-    @Transactional
-    public MessageResDTO sellProduct(Long id, SellProductReqDTO request) {
-        Optional<Product> product =productRepository.findById(id);
-        if (product.isPresent()) {
-            productRepository.updateQuantityById(product.get().getQuantity()- request.getQuantity(), id);
-            return new MessageResDTO("product quantity update successfully");
-        }
-        return new MessageResDTO("product quantity update failed");
-
+        return new ResponseEntity<>(responseList, HttpStatus.OK);
     }
 }

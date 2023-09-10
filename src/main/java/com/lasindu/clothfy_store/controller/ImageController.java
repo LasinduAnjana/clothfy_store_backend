@@ -27,17 +27,17 @@ public class ImageController {
         return imageService.upload(multipartFile);
     }
 
-    @GetMapping("/public/image/{id}")
-    public ResponseEntity<?> readImage(@PathVariable long id) {
-        try {
-            var image = imageService.getImage(id);
-            if (image == null) {
-                return new ResponseEntity<MessageResDTO>(new MessageResDTO("image not found"), HttpStatus.NOT_FOUND);
-            } else {
-                return imageService.getImage(id);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+//    @GetMapping("/public/image/{id}")
+//    public ResponseEntity<?> readImage(@PathVariable long id) {
+//        try {
+//            var image = imageService.getImage(id);
+//            if (image == null) {
+//                return new ResponseEntity<MessageResDTO>(new MessageResDTO("image not found"), HttpStatus.NOT_FOUND);
+//            } else {
+//                return imageService.getImage(id);
+//            }
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 }

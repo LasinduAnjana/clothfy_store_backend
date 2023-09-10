@@ -1,11 +1,14 @@
 package com.lasindu.clothfy_store.dto.response;
 
+import com.lasindu.clothfy_store.entity.ProductCategory;
 import com.lasindu.clothfy_store.entity.ProductSize;
 import com.lasindu.clothfy_store.entity.ProductType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 /**
  * @author Lasindu Anjana
@@ -27,5 +30,6 @@ public class ProductDTO {
     private Double price;
     private ProductSize size;
     private ProductType type;
-    private String[] imageLinks;
+    private ProductCategory category;
+    private List<String> imageLinks;
 }
