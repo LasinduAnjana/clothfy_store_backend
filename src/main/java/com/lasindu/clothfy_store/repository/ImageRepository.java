@@ -18,5 +18,5 @@ import java.util.Optional;
 @Repository
 public interface ImageRepository extends JpaRepository<Image, Long> {
 
-    List<Image> findAllByProductOrderByPlacement(Product product);
+    Optional<List<Image>> findAllByProductOrderByPlacement(Product product);
 }

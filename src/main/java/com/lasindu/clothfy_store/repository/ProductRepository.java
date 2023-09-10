@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Lasindu Anjana
@@ -27,9 +28,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("""
     SELECT p from Product p ORDER BY p.id DESC LIMIT 10
 """)
-    List<Product> findTop10();
+    Optional<List<Product>> findTop10();
 
-    List<Product> findAllByTypeOrderById(ProductType type);
+    Optional<List<Product>> findAllByTypeOrderById(ProductType type);
 
-    List<Product> findAllByCategoryOrderById(ProductCategory category);
+    Optional<List<Product>> findAllByCategoryOrderById(ProductCategory category);
 }

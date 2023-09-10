@@ -1,8 +1,6 @@
 package com.lasindu.clothfy_store.service;
 
 import com.lasindu.clothfy_store.dto.request.AddProductReqDTO;
-import com.lasindu.clothfy_store.dto.request.ImageDTO;
-import com.lasindu.clothfy_store.dto.request.SellProductReqDTO;
 import com.lasindu.clothfy_store.dto.response.MessageResDTO;
 import com.lasindu.clothfy_store.dto.response.ProductDTO;
 import com.lasindu.clothfy_store.entity.*;
@@ -62,12 +60,12 @@ public class ProductService {
                     .build()
             );
         }
-        List<Image> images = imageRepository.findAllByProductOrderByPlacement(product);
+        Optional<List<Image>> images = imageRepository.findAllByProductOrderByPlacement(product);
         List<String> links = new ArrayList<String>();
 
-        images.forEach(link -> {
+        images.ifPresent(imageList -> imageList.forEach(link -> {
             links.add(link.getLink());
-        });
+        }));
 
         ProductDTO response = ProductDTO.builder()
                 .title(product.getTitle())
@@ -86,7 +84,7 @@ public class ProductService {
     }
 
     public ResponseEntity<List<ProductDTO>> getAllProducts() {
-        List<Product> productList = productRepository.findAll();
+        Optional<List<Product>> productList = Optional.of(productRepository.findAll());
         return getListResponseEntity(productList);
     }
 
@@ -126,42 +124,48 @@ public class ProductService {
     }
 
     public ResponseEntity<List<ProductDTO>> getNewProducts() {
-        List<Product> productList = productRepository.findTop10();
+        Optional<List<Product>> productList = productRepository.findTop10();
         return getListResponseEntity(productList);
     }
 
     public ResponseEntity<List<ProductDTO>> getProductByProductType(ProductType type) {
-        List<Product> productList = productRepository.findAllByTypeOrderById(type);
+        Optional<List<Product>> productList = productRepository.findAllByTypeOrderById(type);
         return getListResponseEntity(productList);
     }
 
     public ResponseEntity<List<ProductDTO>> getProductByProductCategory(ProductCategory category) {
-        List<Product> productList = productRepository.findAllByCategoryOrderById(category);
+        Optional<List<Product>> productList = productRepository.findAllByCategoryOrderById(category);
         return getListResponseEntity(productList);
     }
 
-    private ResponseEntity<List<ProductDTO>> getListResponseEntity(List<Product> productList) {
+    private ResponseEntity<List<ProductDTO>> getListResponseEntity(Optional<List<Product>> productList) {
         List<ProductDTO> responseList = new ArrayList<>();
-        productList.forEach(product -> {
-            List<Image> images = imageRepository.findAllByProductOrderByPlacement(product);
-            List<String> links = new ArrayList<>();
+        if (productList.isPresent()) {
+            productList.get().forEach(product -> {
+                Optional<List<Image>> images = imageRepository.findAllByProductOrderByPlacement(product);
+                List<String> links = new ArrayList<>();
 
-            images.forEach(link -> {
-                links.add(link.getLink());
+                if (images.isPresent()) {
+                    images.get().forEach(link -> {
+                        links.add(link.getLink());
+                    });
+
+                    responseList.add(ProductDTO.builder()
+                            .title(product.getTitle())
+                            .quantity(product.getQuantity())
+                            .description(product.getDescription())
+                            .weight(product.getWeight())
+                            .material(product.getMaterial())
+                            .price(product.getPrice())
+                            .size(product.getSize())
+                            .type(product.getType())
+                            .imageLinks(links)
+                            .build());
+                }
             });
-
-            responseList.add(ProductDTO.builder()
-                    .title(product.getTitle())
-                    .quantity(product.getQuantity())
-                    .description(product.getDescription())
-                    .weight(product.getWeight())
-                    .material(product.getMaterial())
-                    .price(product.getPrice())
-                    .size(product.getSize())
-                    .type(product.getType())
-                    .imageLinks(links)
-                    .build());
-        });
-        return new ResponseEntity<>(responseList, HttpStatus.OK);
+            return new ResponseEntity<>(responseList, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+        }
     }
 }

@@ -10,5 +10,6 @@ public enum ProductCategory {
     BABY,
     KIDS,
     GENTS,
-    LADIES
+    LADIES,
+    UNISEX,
 }
