@@ -5,6 +5,8 @@ import com.lasindu.clothfy_store.entity.Product;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
+import java.util.UUID;
+
 /**
  * @author Lasindu Anjana
  * @email lasindua@gmail.com
@@ -12,7 +14,7 @@ import jakarta.persistence.ManyToOne;
  **/
 
 public class CartItemDTO {
-    private Long id;
+    private UUID id;
     private Product product;
     private Cart cart;
     private int quantity;

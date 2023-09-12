@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * @author Lasindu Anjana
@@ -16,7 +17,7 @@ import java.util.Optional;
  **/
 
 @Repository
-public interface ImageRepository extends JpaRepository<Image, Long> {
+public interface ImageRepository extends JpaRepository<Image, UUID> {
 
     Optional<List<Image>> findAllByProductOrderByPlacement(Product product);
 }

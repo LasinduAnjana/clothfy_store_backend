@@ -1,6 +1,5 @@
 package com.lasindu.clothfy_store.dto.request;
 
-import com.lasindu.clothfy_store.entity.Product;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class QuantityDTO {
+public class QuantityReqDTO {
     private int extraSmall;
     private int small;
     private int medium;

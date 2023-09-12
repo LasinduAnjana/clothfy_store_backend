@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * @author Lasindu Anjana
@@ -13,6 +14,6 @@ import java.util.Optional;
  * @createdDate 9/3/23
  **/
 
-public interface CartRepository extends JpaRepository<Cart, Long> {
-    Optional<Cart> findCartByUserId(Long id);
+public interface CartRepository extends JpaRepository<Cart, UUID> {
+    Optional<Cart> findCartByUserId(UUID id);
 }

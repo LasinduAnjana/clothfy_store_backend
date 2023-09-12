@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * @author Lasindu Anjana
@@ -18,24 +19,24 @@ import java.util.Optional;
  **/
 
 @RestController
-@RequestMapping("api/v1/user")
+@RequestMapping("api/v1")
 @RequiredArgsConstructor
 public class CartController {
     private final CartService cartService;
 
-    @GetMapping("/{cartId}")
-    public ResponseEntity<Optional<List<CartItem>>> getAllCartItems(@PathVariable long cartId) {
+    @GetMapping("/user/cart/{cartId}")
+    public ResponseEntity<Optional<List<CartItem>>> getAllCartItems(@PathVariable UUID cartId) {
         Optional<List<CartItem>> items = cartService.getAllCartItemsByUser(cartId);
         return new ResponseEntity<>(items, HttpStatus.OK);
     }
 
-    @DeleteMapping("/user/cart/")
+    @DeleteMapping("/user/cart")
     public ResponseEntity<MessageResDTO> clearCart() {
         return new ResponseEntity<>(cartService.clearCartByUser(), HttpStatus.OK);
     }
 
     @DeleteMapping("/user/cart/{itemId}")
-    public ResponseEntity<MessageResDTO> clearCart(@PathVariable long itemId) {
+    public ResponseEntity<MessageResDTO> clearCart(@PathVariable UUID itemId) {
         return cartService.removeCartItem(itemId);
     }
 }

@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 /**
  * @author Lasindu Anjana
  * @email lasindua@gmail.com
@@ -20,8 +22,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "image")
 public class Image {
     @Id
-    @GeneratedValue
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @Column(unique = true)
     private String link;

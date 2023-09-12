@@ -1,10 +1,9 @@
 package com.lasindu.clothfy_store.dto.response;
 
-import com.lasindu.clothfy_store.dto.request.QuantityDTO;
+import com.lasindu.clothfy_store.dto.request.QuantityReqDTO;
 import com.lasindu.clothfy_store.entity.ProductCategory;
 import com.lasindu.clothfy_store.entity.ProductSize;
 import com.lasindu.clothfy_store.entity.ProductType;
-import com.lasindu.clothfy_store.entity.Quantity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,6 +11,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * @author Lasindu Anjana
@@ -24,12 +24,12 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductDTO {
-    private long id;
+    private UUID id;
     private String title;
     private String description;
     private String material;
     private int weight;
-    private QuantityDTO quantity;
+    private QuantityReqDTO quantity;
     private Double price;
     private Set<ProductSize> size;
     private ProductType type;

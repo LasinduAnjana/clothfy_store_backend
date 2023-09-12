@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * @author Lasindu Anjana
@@ -20,11 +21,11 @@ public class UserService {
     private final UserRepository userRepository;
     private final AuthenticationService authenticationService;
 
-    public Optional<User> getUser(Long id) {
+    public Optional<User> getUser(UUID id) {
         return userRepository.findById(id);
     }
 
-    public boolean removeUser(Long id) {
+    public boolean removeUser(UUID id) {
         Optional<User> user = userRepository.findById(id);
         if (user.isPresent()) {
             authenticationService.revokeAllUserTokens(user.get());

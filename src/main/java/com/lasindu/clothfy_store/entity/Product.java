@@ -1,13 +1,11 @@
 package com.lasindu.clothfy_store.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * @author Lasindu Anjana
@@ -23,13 +21,12 @@ import java.util.Set;
 @Table(name = "product")
 public class Product {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
     private String title;
     private String description;
     private String material;
     private int weight;
-//    private int quantity;
     private Double price;
 
     @Enumerated(EnumType.STRING)

@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 /**
  * @author Lasindu Anjana
  * @email lasindua@gmail.com
@@ -20,8 +22,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "product_quantity")
 public class Quantity {
     @Id
-    @GeneratedValue
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "product_id")

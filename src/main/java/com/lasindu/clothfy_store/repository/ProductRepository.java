@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * @author Lasindu Anjana
@@ -18,12 +19,12 @@ import java.util.Optional;
  **/
 
 @Repository
-public interface ProductRepository extends JpaRepository<Product, Long> {
+public interface ProductRepository extends JpaRepository<Product, UUID> {
     @Modifying
     @Query("""
             UPDATE Product p SET p.quantity = :quantity WHERE p.id = :id
             """)
-   void updateQuantityById(int quantity, Long id);
+   void updateQuantityById(int quantity, UUID id);
 
     @Query("""
     SELECT p from Product p ORDER BY p.id DESC LIMIT 10

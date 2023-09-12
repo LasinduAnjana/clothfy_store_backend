@@ -1,7 +1,7 @@
 package com.lasindu.clothfy_store.service;
 
 import com.lasindu.clothfy_store.dto.request.AddProductReqDTO;
-import com.lasindu.clothfy_store.dto.request.QuantityDTO;
+import com.lasindu.clothfy_store.dto.request.QuantityReqDTO;
 import com.lasindu.clothfy_store.dto.request.SellProductReqDTO;
 import com.lasindu.clothfy_store.dto.response.MessageResDTO;
 import com.lasindu.clothfy_store.dto.response.ProductDTO;
@@ -15,9 +15,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * @author Lasindu Anjana
@@ -38,18 +38,8 @@ public class ProductService {
 
     @Transactional
     public ResponseEntity<ProductDTO> addProduct(AddProductReqDTO request) {
-//Product = productRepository.save(Product.builder()
-//                .title(request.getTitle())
-//                .description(request.getDescription())
-//                .material(request.getMaterial())
-//                .weight(request.getWeight())
-//                .price(request.getPrice())
-//                .size(request.getSize())
-//                .category(request.getCategory())
-//                .type(request.getType())
-//                .build());
 
-        QuantityDTO reqQuantity = request.getQuantity();
+        QuantityReqDTO reqQuantity = request.getQuantity();
         Quantity quantity = quantityRepository.save(
                 Quantity.builder()
                         .extraSmall(reqQuantity.getExtraSmall())
@@ -96,11 +86,13 @@ public class ProductService {
         }));
 
         ProductDTO response = ProductDTO.builder()
+                .id(product.getId())
                 .title(product.getTitle())
                 .type(product.getType())
                 .size(product.getSize())
                 .price(product.getPrice())
                 .material(product.getMaterial())
+                .category(product.getCategory())
                 .weight(product.getWeight())
                 .description(product.getDescription())
                 .quantity(reqQuantity)
@@ -117,7 +109,7 @@ public class ProductService {
         return getListResponseEntity(productList);
     }
 
-    public ResponseEntity<?> getProductById(Long id) {
+    public ResponseEntity<?> getProductById(UUID id) {
         Optional<Product> product = productRepository.findById(id);
         if (product.isPresent())
             return new ResponseEntity<>(product.get(), HttpStatus.OK);
@@ -125,7 +117,7 @@ public class ProductService {
     }
 
     @Transactional
-    public ResponseEntity<MessageResDTO> sellProduct(Long id, SellProductReqDTO request) {
+    public ResponseEntity<MessageResDTO> sellProduct(UUID id, SellProductReqDTO request) {
 
         Optional<Product> product = productRepository.findById(id);
         if (product.isPresent()) {
@@ -137,7 +129,7 @@ public class ProductService {
                 case MEDIUM -> quantity.setMedium(quantity.getMedium() - request.getQuantity());
                 case LARGE -> quantity.setLarge(quantity.getLarge() - request.getQuantity());
                 case EXTRA_LARGE -> quantity.setExtraLarge(quantity.getExtraLarge() - request.getQuantity());
-                case DOUBLE_EXTRA_SMALL -> quantity.setDoubleExtraLarge(quantity.getDoubleExtraLarge() - request.getQuantity());
+                case DOUBLE_EXTRA_LARGE -> quantity.setDoubleExtraLarge(quantity.getDoubleExtraLarge() - request.getQuantity());
             }
 
             quantityRepository.save(quantity);
@@ -148,7 +140,7 @@ public class ProductService {
 
     }
 
-    public ResponseEntity<?> addToCartProduct(Long id, int quantity) {
+    public ResponseEntity<?> addToCartProduct(UUID id, int quantity) {
         Optional<Product> product = productRepository.findById(id);
         Optional<User> user = userUtil.getUserDetails();
 
@@ -193,7 +185,7 @@ public class ProductService {
                         links.add(link.getLink());
                     });
 
-                    QuantityDTO resQuantity = QuantityDTO.builder()
+                    QuantityReqDTO resQuantity = QuantityReqDTO.builder()
                             .extraSmall(product.getQuantity().getExtraSmall())
                             .small(product.getQuantity().getSmall())
                             .medium(product.getQuantity().getMedium())
@@ -203,6 +195,7 @@ public class ProductService {
                             .build();
 
                     responseList.add(ProductDTO.builder()
+                            .id(product.getId())
                             .title(product.getTitle())
                             .quantity(resQuantity)
                             .description(product.getDescription())

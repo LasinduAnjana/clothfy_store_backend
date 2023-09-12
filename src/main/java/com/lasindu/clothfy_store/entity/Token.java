@@ -4,6 +4,8 @@ import com.lasindu.clothfy_store.config.security.token.TokenType;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.UUID;
+
 /**
  * @author Lasindu Anjana
  * @email lasindua@gmail.com
@@ -18,8 +20,8 @@ import lombok.*;
 @Table(name = "token")
 public class Token {
     @Id
-    @GeneratedValue
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @Column(unique = true)
     private String token;

@@ -3,7 +3,6 @@ package com.lasindu.clothfy_store.dto.request;
 import com.lasindu.clothfy_store.entity.ProductCategory;
 import com.lasindu.clothfy_store.entity.ProductSize;
 import com.lasindu.clothfy_store.entity.ProductType;
-import com.lasindu.clothfy_store.entity.Quantity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
@@ -29,7 +28,7 @@ public class AddProductReqDTO {
     private String description;
     private String material;
     private int weight;
-    private QuantityDTO quantity;
+    private QuantityReqDTO quantity;
     private Double price;
     @Enumerated(EnumType.STRING)
     private Set<ProductSize> size;

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * @author Lasindu Anjana
@@ -32,7 +33,7 @@ public class CartService {
 
     private final UserUtil userUtil;
 
-    public Optional<List<CartItem>> getAllCartItemsByUser(long cartId){
+    public Optional<List<CartItem>> getAllCartItemsByUser(UUID cartId){
         Optional<Cart> cart = cartRepository.findById(cartId);
         return cart.map(cartItemRepository::findAllByCart).orElse(null);
     }
@@ -50,7 +51,7 @@ public class CartService {
     }
 
     @Transactional
-    public ResponseEntity<MessageResDTO> removeCartItem(long itemId) {
+    public ResponseEntity<MessageResDTO> removeCartItem(UUID itemId) {
         if (userUtil.getUserDetails().isPresent()) {
             Optional<Cart> cart = cartRepository.findById(userUtil.getUserDetails().get().getCart().getId());
             if (cart.isPresent()) {
@@ -61,7 +62,7 @@ public class CartService {
         return new ResponseEntity<MessageResDTO>(new MessageResDTO("item not found in the cart"), HttpStatus.NOT_FOUND);
     }
 
-    public boolean confirmSellByCart(long cartId) {
+    public boolean confirmSellByCart(UUID cartId) {
         Optional<Cart> cart = cartRepository.findById(cartId);
         if (cart.isPresent()) {
             Optional<List<CartItem>> itemList = cartItemRepository.findAllByCart(cart.get());

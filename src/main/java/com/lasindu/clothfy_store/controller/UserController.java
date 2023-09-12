@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * @author Lasindu Anjana
@@ -24,7 +25,7 @@ public class UserController {
     private final UserService userService;
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<MessageResDTO> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<MessageResDTO> deleteUser(@PathVariable UUID id) {
         boolean result = userService.removeUser(id);
         if (result) {
             return new ResponseEntity<MessageResDTO>(new MessageResDTO("User removed successfull"), HttpStatus.OK);
@@ -34,7 +35,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getUser(@PathVariable Long id) {
+    public ResponseEntity<?> getUser(@PathVariable UUID id) {
         Optional<User> result = userService.getUser(id);
         return result.map(user -> new ResponseEntity<Object>(new UserResDTO(
                 user.getFirstName(),

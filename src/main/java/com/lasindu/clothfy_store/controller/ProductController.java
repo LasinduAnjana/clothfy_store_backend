@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * @author Lasindu Anjana
@@ -42,7 +43,7 @@ public class ProductController {
     }
 
     @GetMapping("/public/product/{productId}")
-    public ResponseEntity<?> getProductById(@PathVariable Long productId) {
+    public ResponseEntity<?> getProductById(@PathVariable UUID productId) {
         return productService.getProductById(productId);
     }
 
@@ -52,12 +53,12 @@ public class ProductController {
     }
 
     @PutMapping("/user/product/buy/{id}")
-    public ResponseEntity<MessageResDTO> sellProduct(@PathVariable Long id, @RequestBody SellProductReqDTO request) {
+    public ResponseEntity<MessageResDTO> sellProduct(@PathVariable UUID id, @RequestBody SellProductReqDTO request) {
         return productService.sellProduct(id, request);
     }
 
     @PostMapping("/user/product/cart/{id}")
-    public ResponseEntity<?> addToCartProduct(@PathVariable Long id, @RequestBody int quantity) {
+    public ResponseEntity<?> addToCartProduct(@PathVariable UUID id, @RequestBody int quantity) {
         return productService.addToCartProduct(id, quantity);
     }
 

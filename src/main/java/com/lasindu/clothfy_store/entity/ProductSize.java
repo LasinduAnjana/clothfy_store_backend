@@ -12,5 +12,5 @@ public enum ProductSize {
     MEDIUM,
     LARGE,
     EXTRA_LARGE,
-    DOUBLE_EXTRA_SMALL
+    DOUBLE_EXTRA_LARGE
 }
