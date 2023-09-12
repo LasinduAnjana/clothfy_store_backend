@@ -28,17 +28,17 @@ public class AuthController {
     private final AuthenticationService service;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResDTO> register(
+    public ResponseEntity<?> register(
             @RequestBody RegisterReqDTO request
     ) {
-        return ResponseEntity.ok(service.register(request));
+        return service.register(request);
     }
 
     @PostMapping("/admin/register")
-    public ResponseEntity<AuthResDTO> adminRegister(
+    public ResponseEntity<?> adminRegister(
             @RequestBody RegisterReqDTO request
     ) {
-        return ResponseEntity.ok(service.adminRegister(request));
+        return service.adminRegister(request);
     }
 
     @PostMapping("/authenticate")

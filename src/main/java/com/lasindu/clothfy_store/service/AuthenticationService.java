@@ -5,8 +5,10 @@ import com.lasindu.clothfy_store.config.security.user.Role;
 import com.lasindu.clothfy_store.dto.request.AuthReqDTO;
 import com.lasindu.clothfy_store.dto.request.RegisterReqDTO;
 import com.lasindu.clothfy_store.dto.response.AuthResDTO;
+import com.lasindu.clothfy_store.entity.Cart;
 import com.lasindu.clothfy_store.entity.Token;
 import com.lasindu.clothfy_store.entity.User;
+import com.lasindu.clothfy_store.repository.CartRepository;
 import com.lasindu.clothfy_store.repository.TokenRepository;
 import com.lasindu.clothfy_store.repository.UserRepository;
 import com.lasindu.clothfy_store.config.security.token.TokenType;
@@ -14,12 +16,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Optional;
 
 /**
  * @author Lasindu Anjana
@@ -30,32 +35,45 @@ import java.io.IOException;
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
-    private final UserRepository repository;
+    private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
+    private final CartRepository cartRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    // TODO: check existing user not implemented, check again
-    public AuthResDTO register(RegisterReqDTO request) {
-        var user = User.builder()
-                .firstName(request.getFirstname())
-                .lastName(request.getLastname())
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.USER)
-                .build();
-        var savedUser = repository.save(user);
-        var jwtToken = jwtService.generateToken(user);
-        var refreshToken = jwtService.generateRefreshToken(user);
-        saveUserToken(savedUser, jwtToken);
-        return AuthResDTO.builder()
-                .accessToken(jwtToken)
-                .refreshToken(refreshToken)
-                .build();
+    public ResponseEntity<?> register(RegisterReqDTO request) {
+        Optional<User> existingUser = userRepository.findByEmail(request.getEmail());
+        if (existingUser.isEmpty()) {
+            var user = User.builder()
+                    .firstName(request.getFirstname())
+                    .lastName(request.getLastname())
+                    .email(request.getEmail())
+                    .password(passwordEncoder.encode(request.getPassword()))
+                    .role(Role.USER)
+                    .build();
+            var savedUser = userRepository.save(user);
+
+            Cart cart = cartRepository.save(Cart.builder().user(savedUser).build());
+
+            savedUser.setCart(cart);
+            savedUser = userRepository.save(savedUser);
+
+            var jwtToken = jwtService.generateToken(user);
+            var refreshToken = jwtService.generateRefreshToken(user);
+            saveUserToken(savedUser, jwtToken);
+            return new ResponseEntity<>(AuthResDTO.builder()
+                    .accessToken(jwtToken)
+                    .refreshToken(refreshToken)
+                    .build(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("User with given email already exists", HttpStatus.FORBIDDEN);
+        }
     }
 
-    public AuthResDTO adminRegister(RegisterReqDTO request) {
+    public ResponseEntity<?> adminRegister(RegisterReqDTO request) {
+        Optional<User> existingUser = userRepository.findByEmail(request.getEmail());
+        if (existingUser.isEmpty()) {
         var user = User.builder()
                 .firstName(request.getFirstname())
                 .lastName(request.getLastname())
@@ -63,14 +81,17 @@ public class AuthenticationService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.ADMIN)
                 .build();
-        var savedUser = repository.save(user);
+        var savedUser = userRepository.save(user);
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
         saveUserToken(savedUser, jwtToken);
-        return AuthResDTO.builder()
+        return new ResponseEntity<>(AuthResDTO.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
-                .build();
+                .build(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("User with given email already exists", HttpStatus.FORBIDDEN);
+        }
     }
 
     public AuthResDTO authenticate(AuthReqDTO request) {
@@ -80,7 +101,7 @@ public class AuthenticationService {
                         request.getPassword()
                 )
         );
-        var user = repository.findByEmail(request.getEmail())
+        var user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow();
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
@@ -129,7 +150,7 @@ public class AuthenticationService {
         refreshToken = authHeader.substring(7);
         userEmail = jwtService.extractUsername(refreshToken);
         if (userEmail != null) {
-            var user = this.repository.findByEmail(userEmail)
+            var user = this.userRepository.findByEmail(userEmail)
                     .orElseThrow();
             if (jwtService.isTokenValid(refreshToken, user)) {
                 var accessToken = jwtService.generateToken(user);

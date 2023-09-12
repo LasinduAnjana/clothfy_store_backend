@@ -26,9 +26,11 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @OneToOne(mappedBy = "cart")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "cart")
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cartitem_id")
     private List<CartItem> cartItems;
 }

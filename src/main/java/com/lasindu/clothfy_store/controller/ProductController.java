@@ -1,23 +1,20 @@
 package com.lasindu.clothfy_store.controller;
 
 import com.lasindu.clothfy_store.dto.request.AddProductReqDTO;
+import com.lasindu.clothfy_store.dto.request.AddToCartReqDTO;
 import com.lasindu.clothfy_store.dto.request.SellProductReqDTO;
 import com.lasindu.clothfy_store.dto.response.MessageResDTO;
 import com.lasindu.clothfy_store.dto.response.ProductDTO;
-import com.lasindu.clothfy_store.entity.CartItem;
-import com.lasindu.clothfy_store.entity.Product;
 import com.lasindu.clothfy_store.entity.ProductCategory;
 import com.lasindu.clothfy_store.entity.ProductType;
 import com.lasindu.clothfy_store.service.ProductService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
+
+import lombok.RequiredArgsConstructor;
 
 /**
  * @author Lasindu Anjana
@@ -58,8 +55,8 @@ public class ProductController {
     }
 
     @PostMapping("/user/product/cart/{id}")
-    public ResponseEntity<?> addToCartProduct(@PathVariable UUID id, @RequestBody int quantity) {
-        return productService.addToCartProduct(id, quantity);
+    public ResponseEntity<?> addToCartProduct(@PathVariable UUID id, @RequestBody AddToCartReqDTO reqDTO) {
+        return productService.addToCartProduct(id, reqDTO);
     }
 
     @GetMapping("/public/product/filter-by-type")

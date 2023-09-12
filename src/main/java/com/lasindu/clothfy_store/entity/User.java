@@ -37,7 +37,7 @@ public class User implements UserDetails {
     private Role role;
     @OneToMany(mappedBy = "user")
     private List<Token> tokens;
-    @OneToOne
+    @OneToOne(mappedBy = "user")
     private Cart cart;
 
 

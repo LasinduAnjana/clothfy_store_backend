@@ -1,6 +1,7 @@
 package com.lasindu.clothfy_store.service;
 
 import com.lasindu.clothfy_store.dto.request.AddProductReqDTO;
+import com.lasindu.clothfy_store.dto.request.AddToCartReqDTO;
 import com.lasindu.clothfy_store.dto.request.QuantityReqDTO;
 import com.lasindu.clothfy_store.dto.request.SellProductReqDTO;
 import com.lasindu.clothfy_store.dto.response.MessageResDTO;
@@ -140,21 +141,22 @@ public class ProductService {
 
     }
 
-    public ResponseEntity<?> addToCartProduct(UUID id, int quantity) {
+    public ResponseEntity<?> addToCartProduct(UUID id, AddToCartReqDTO quantity) {
         Optional<Product> product = productRepository.findById(id);
         Optional<User> user = userUtil.getUserDetails();
 
-        if (product.isPresent() && user.isPresent() && cartRepository.findCartByUserId(user.get().getId()).isPresent()){
+        if (product.isPresent() && user.isPresent()){
             return new ResponseEntity<>(cartItemRepository.save(
                 CartItem
                     .builder()
-                    .cart(cartRepository.findCartByUserId(user.get().getId()).get())
+                    .cart(user.get().getCart())
                     .product(product.get())
-                    .quantity(quantity)
+                    .quantity(quantity.getQuantity())
+                    .size(quantity.getSize())
                     .build()
             ), HttpStatus.OK);
         }
-        return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("product or user not found", HttpStatus.BAD_REQUEST);
     }
 
     public ResponseEntity<List<ProductDTO>> getNewProducts() {
