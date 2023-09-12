@@ -52,8 +52,8 @@ public class ProductController {
     }
 
     @PutMapping("/user/product/buy/{id}")
-    public ResponseEntity<MessageResDTO> sellProduct(@PathVariable Long id, @RequestBody int quantity) {
-        return productService.sellProduct(id, quantity);
+    public ResponseEntity<MessageResDTO> sellProduct(@PathVariable Long id, @RequestBody SellProductReqDTO request) {
+        return productService.sellProduct(id, request);
     }
 
     @PostMapping("/user/product/cart/{id}")

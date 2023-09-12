@@ -9,26 +9,29 @@ import lombok.NoArgsConstructor;
 /**
  * @author Lasindu Anjana
  * @email lasindua@gmail.com
- * @createdDate 8/29/23
+ * @createdDate 9/12/23
  **/
 
+@Entity
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "image")
-public class Image {
+@NoArgsConstructor
+@Table(name = "product_quantity")
+public class Quantity {
     @Id
     @GeneratedValue
     private Long id;
 
-    @Column(unique = true)
-    private String link;
-
-    private int placement;
-
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "product_id")
-    public Product product;
+    private Product product;
+
+    private int extraSmall;
+    private int small;
+    private int medium;
+    private int large;
+    private int extraLarge;
+    private int doubleExtraLarge;
+
 }

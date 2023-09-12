@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Lasindu Anjana
@@ -22,17 +23,19 @@ import java.util.List;
 @Table(name = "product")
 public class Product {
     @Id
-    @GeneratedValue
-    private long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String title;
     private String description;
     private String material;
     private int weight;
-    private int quantity;
+//    private int quantity;
     private Double price;
 
     @Enumerated(EnumType.STRING)
-    private ProductSize size;
+    @Column(columnDefinition = "SET('EXTRA_SMALL', 'SMALL', 'MEDIUM', 'LARGE', 'EXTRA_LARGE', 'DOUBLE_EXTRA_SMALL')")
+    @ElementCollection
+    private Set<ProductSize> size;
 
     @Enumerated(EnumType.STRING)
     private ProductCategory category;
@@ -45,4 +48,8 @@ public class Product {
 
     @OneToMany(mappedBy = "product")
     private List<CartItem> cartItems;
+
+    @OneToOne(mappedBy = "product")
+    @JoinColumn(name = "quantity_id")
+    public Quantity quantity;
 }

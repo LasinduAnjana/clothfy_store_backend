@@ -1,13 +1,12 @@
 package com.lasindu.clothfy_store.service;
 
 import com.lasindu.clothfy_store.dto.request.AddProductReqDTO;
+import com.lasindu.clothfy_store.dto.request.QuantityDTO;
+import com.lasindu.clothfy_store.dto.request.SellProductReqDTO;
 import com.lasindu.clothfy_store.dto.response.MessageResDTO;
 import com.lasindu.clothfy_store.dto.response.ProductDTO;
 import com.lasindu.clothfy_store.entity.*;
-import com.lasindu.clothfy_store.repository.CartItemRepository;
-import com.lasindu.clothfy_store.repository.CartRepository;
-import com.lasindu.clothfy_store.repository.ImageRepository;
-import com.lasindu.clothfy_store.repository.ProductRepository;
+import com.lasindu.clothfy_store.repository.*;
 import com.lasindu.clothfy_store.util.UserUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,21 +32,49 @@ public class ProductService {
     private final ImageRepository imageRepository;
     private final CartItemRepository cartItemRepository;
     private final CartRepository cartRepository;
+    private final QuantityRepository quantityRepository;
 
     private final UserUtil userUtil;
 
+    @Transactional
     public ResponseEntity<ProductDTO> addProduct(AddProductReqDTO request) {
-        var product = productRepository.save(Product.builder()
+//Product = productRepository.save(Product.builder()
+//                .title(request.getTitle())
+//                .description(request.getDescription())
+//                .material(request.getMaterial())
+//                .weight(request.getWeight())
+//                .price(request.getPrice())
+//                .size(request.getSize())
+//                .category(request.getCategory())
+//                .type(request.getType())
+//                .build());
+
+        QuantityDTO reqQuantity = request.getQuantity();
+        Quantity quantity = quantityRepository.save(
+                Quantity.builder()
+                        .extraSmall(reqQuantity.getExtraSmall())
+                        .small(reqQuantity.getSmall())
+                        .medium(reqQuantity.getMedium())
+                        .large(reqQuantity.getLarge())
+                        .extraLarge(reqQuantity.getExtraLarge())
+                        .doubleExtraLarge(reqQuantity.getDoubleExtraLarge())
+                        .build()
+        );
+
+        Product product = productRepository.save(Product.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .material(request.getMaterial())
+                .quantity(quantity)
                 .weight(request.getWeight())
-                .quantity(request.getQuantity())
                 .price(request.getPrice())
                 .size(request.getSize())
                 .category(request.getCategory())
                 .type(request.getType())
                 .build());
+
+        quantity.setProduct(product);
+        quantityRepository.save(quantity);
 
 
         List<String> imageLinks = request.getImageLinks();
@@ -75,7 +103,7 @@ public class ProductService {
                 .material(product.getMaterial())
                 .weight(product.getWeight())
                 .description(product.getDescription())
-                .quantity(product.getQuantity())
+                .quantity(reqQuantity)
                 .imageLinks(links)
                 .build();
 
@@ -83,6 +111,7 @@ public class ProductService {
 
     }
 
+    @Transactional
     public ResponseEntity<List<ProductDTO>> getAllProducts() {
         Optional<List<Product>> productList = Optional.of(productRepository.findAll());
         return getListResponseEntity(productList);
@@ -96,10 +125,23 @@ public class ProductService {
     }
 
     @Transactional
-    public ResponseEntity<MessageResDTO> sellProduct(Long id, int quantity) {
+    public ResponseEntity<MessageResDTO> sellProduct(Long id, SellProductReqDTO request) {
+
         Optional<Product> product = productRepository.findById(id);
         if (product.isPresent()) {
-            productRepository.updateQuantityById(product.get().getQuantity() - quantity, id);
+
+            Quantity quantity = product.get().getQuantity();
+            switch (request.getSize()) {
+                case EXTRA_SMALL -> quantity.setExtraSmall(quantity.getExtraSmall() - request.getQuantity());
+                case SMALL -> quantity.setSmall(quantity.getSmall() - request.getQuantity());
+                case MEDIUM -> quantity.setMedium(quantity.getMedium() - request.getQuantity());
+                case LARGE -> quantity.setLarge(quantity.getLarge() - request.getQuantity());
+                case EXTRA_LARGE -> quantity.setExtraLarge(quantity.getExtraLarge() - request.getQuantity());
+                case DOUBLE_EXTRA_SMALL -> quantity.setDoubleExtraLarge(quantity.getDoubleExtraLarge() - request.getQuantity());
+            }
+
+            quantityRepository.save(quantity);
+
             return new ResponseEntity<>(new MessageResDTO("product quantity update successfully"), HttpStatus.OK);
         }
         return new ResponseEntity<>(new MessageResDTO("product quantity update failed"), HttpStatus.BAD_REQUEST);
@@ -138,6 +180,7 @@ public class ProductService {
         return getListResponseEntity(productList);
     }
 
+
     private ResponseEntity<List<ProductDTO>> getListResponseEntity(Optional<List<Product>> productList) {
         List<ProductDTO> responseList = new ArrayList<>();
         if (productList.isPresent()) {
@@ -150,9 +193,18 @@ public class ProductService {
                         links.add(link.getLink());
                     });
 
+                    QuantityDTO resQuantity = QuantityDTO.builder()
+                            .extraSmall(product.getQuantity().getExtraSmall())
+                            .small(product.getQuantity().getSmall())
+                            .medium(product.getQuantity().getMedium())
+                            .large(product.getQuantity().getLarge())
+                            .extraLarge(product.getQuantity().getExtraLarge())
+                            .doubleExtraLarge(product.getQuantity().getDoubleExtraLarge())
+                            .build();
+
                     responseList.add(ProductDTO.builder()
                             .title(product.getTitle())
-                            .quantity(product.getQuantity())
+                            .quantity(resQuantity)
                             .description(product.getDescription())
                             .weight(product.getWeight())
                             .material(product.getMaterial())
