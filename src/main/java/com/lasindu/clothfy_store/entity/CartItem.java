@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 /**
  * @author Lasindu Anjana
  * @email lasindua@gmail.com
@@ -20,16 +22,16 @@ import lombok.NoArgsConstructor;
 @Table(name = "cartItem")
 public class CartItem {
     @Id
-    @GeneratedValue
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
 
+    @JoinColumn(name = "user_id")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cart_id")
-    private Cart cart;
+    private User user;
 
     private int quantity;
 

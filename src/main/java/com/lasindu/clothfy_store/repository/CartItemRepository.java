@@ -1,7 +1,7 @@
 package com.lasindu.clothfy_store.repository;
 
-import com.lasindu.clothfy_store.entity.Cart;
 import com.lasindu.clothfy_store.entity.CartItem;
+import com.lasindu.clothfy_store.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.UUID;
  **/
 
 public interface CartItemRepository extends JpaRepository<CartItem, UUID> {
-      Optional<List<CartItem>> findAllByCart(Cart cart);
+      Optional<List<CartItem>> findAllByUser(User user);
 
-      void deleteAllByCart(Cart cart);
+      void deleteAllByUser(User user);
 }

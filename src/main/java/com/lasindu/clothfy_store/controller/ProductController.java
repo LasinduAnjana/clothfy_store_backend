@@ -4,7 +4,7 @@ import com.lasindu.clothfy_store.dto.request.AddProductReqDTO;
 import com.lasindu.clothfy_store.dto.request.AddToCartReqDTO;
 import com.lasindu.clothfy_store.dto.request.SellProductReqDTO;
 import com.lasindu.clothfy_store.dto.response.MessageResDTO;
-import com.lasindu.clothfy_store.dto.response.ProductDTO;
+import com.lasindu.clothfy_store.dto.response.ProductResDTO;
 import com.lasindu.clothfy_store.entity.ProductCategory;
 import com.lasindu.clothfy_store.entity.ProductType;
 import com.lasindu.clothfy_store.service.ProductService;
@@ -30,12 +30,12 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping("/public/product")
-    public ResponseEntity<List<ProductDTO>> getAllProducts() {
+    public ResponseEntity<List<ProductResDTO>> getAllProducts() {
         return productService.getAllProducts();
     }
 
     @GetMapping("/public/product/new")
-    public ResponseEntity<List<ProductDTO>> getNewProduct() {
+    public ResponseEntity<List<ProductResDTO>> getNewProduct() {
         return productService.getNewProducts();
     }
 
@@ -45,7 +45,7 @@ public class ProductController {
     }
 
     @PostMapping("/admin/product")
-    public ResponseEntity<ProductDTO> addProduct(@RequestBody AddProductReqDTO request) {
+    public ResponseEntity<ProductResDTO> addProduct(@RequestBody AddProductReqDTO request) {
         return productService.addProduct(request);
     }
 
@@ -60,13 +60,12 @@ public class ProductController {
     }
 
     @GetMapping("/public/product/filter-by-type")
-    public ResponseEntity<List<ProductDTO>> getProductByType(@RequestParam ProductType type) {
+    public ResponseEntity<List<ProductResDTO>> getProductByType(@RequestParam ProductType type) {
         return productService.getProductByProductType(type);
     }
 
     @GetMapping("/public/product/filter-by-category")
-    public ResponseEntity<List<ProductDTO>> getProductByCategory(@RequestParam ProductCategory category) {
+    public ResponseEntity<List<ProductResDTO>> getProductByCategory(@RequestParam ProductCategory category) {
         return productService.getProductByProductCategory(category);
     }
-
 }

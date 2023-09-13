@@ -24,10 +24,9 @@ import java.util.UUID;
 public class CartController {
     private final CartService cartService;
 
-    @GetMapping("/user/cart/{cartId}")
-    public ResponseEntity<Optional<List<CartItem>>> getAllCartItems(@PathVariable UUID cartId) {
-        Optional<List<CartItem>> items = cartService.getAllCartItemsByUser(cartId);
-        return new ResponseEntity<>(items, HttpStatus.OK);
+    @GetMapping("/user/cart")
+    public ResponseEntity<?> getAllCartItems() {
+        return cartService.getAllCartItemsByUser();
     }
 
     @DeleteMapping("/user/cart")
@@ -36,7 +35,7 @@ public class CartController {
     }
 
     @DeleteMapping("/user/cart/{itemId}")
-    public ResponseEntity<MessageResDTO> clearCart(@PathVariable UUID itemId) {
+    public ResponseEntity<?> clearCart(@PathVariable UUID itemId) {
         return cartService.removeCartItem(itemId);
     }
 }

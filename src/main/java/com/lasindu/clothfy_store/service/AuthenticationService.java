@@ -5,10 +5,11 @@ import com.lasindu.clothfy_store.config.security.user.Role;
 import com.lasindu.clothfy_store.dto.request.AuthReqDTO;
 import com.lasindu.clothfy_store.dto.request.RegisterReqDTO;
 import com.lasindu.clothfy_store.dto.response.AuthResDTO;
-import com.lasindu.clothfy_store.entity.Cart;
+//import com.lasindu.clothfy_store.entity.Cart;
+import com.lasindu.clothfy_store.entity.CartItem;
 import com.lasindu.clothfy_store.entity.Token;
 import com.lasindu.clothfy_store.entity.User;
-import com.lasindu.clothfy_store.repository.CartRepository;
+//import com.lasindu.clothfy_store.repository.CartRepository;
 import com.lasindu.clothfy_store.repository.TokenRepository;
 import com.lasindu.clothfy_store.repository.UserRepository;
 import com.lasindu.clothfy_store.config.security.token.TokenType;
@@ -24,6 +25,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -37,7 +40,7 @@ import java.util.Optional;
 public class AuthenticationService {
     private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
-    private final CartRepository cartRepository;
+//    private final CartRepository cartRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
@@ -54,14 +57,14 @@ public class AuthenticationService {
                     .build();
             var savedUser = userRepository.save(user);
 
-            Cart cart = cartRepository.save(Cart.builder().user(savedUser).build());
 
-            savedUser.setCart(cart);
+            savedUser.setCart(new ArrayList<>());
             savedUser = userRepository.save(savedUser);
 
             var jwtToken = jwtService.generateToken(user);
             var refreshToken = jwtService.generateRefreshToken(user);
             saveUserToken(savedUser, jwtToken);
+
             return new ResponseEntity<>(AuthResDTO.builder()
                     .accessToken(jwtToken)
                     .refreshToken(refreshToken)

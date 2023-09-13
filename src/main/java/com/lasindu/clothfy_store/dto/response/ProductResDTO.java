@@ -23,13 +23,13 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductDTO {
+public class ProductResDTO {
     private UUID id;
     private String title;
     private String description;
     private String material;
     private int weight;
-    private QuantityReqDTO quantity;
+    private QuantityResDTO quantity;
     private Double price;
     private Set<ProductSize> size;
     private ProductType type;
