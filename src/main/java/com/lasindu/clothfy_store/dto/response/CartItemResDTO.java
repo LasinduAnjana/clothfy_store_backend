@@ -24,4 +24,5 @@ public class CartItemResDTO {
     private ProductSize size;
     private int quantity;
     private Double price;
+    private String imageSrc;
 }

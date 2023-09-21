@@ -42,6 +42,7 @@ public class CartService {
                         .quantity(cartItem.getQuantity())
                         .size(cartItem.getSize())
                         .title(cartItem.getProduct().getTitle())
+                        .imageSrc(cartItem.getProduct().getImages().get(0).getLink())
                         .build());
             });
 
